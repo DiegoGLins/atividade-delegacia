@@ -1,0 +1,45 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Crime {
+id String @id @default(uuid())
+idCriminoso String
+local String @db.VarChar(255)
+dtHr DateTime
+descricaoDosFatos String @db.VarChar(255) @map("descricao_dos_fatos")
+qtdVitimas Int @map("qtd_vitimas")
+criminoso  Criminoso @relation(fields: [idCriminoso], references: [id])
+arma Arma[]
+@@map("crime")
+}
+
+model Criminoso {
+id String @id @default(uuid())
+nome String
+cpf String @db.VarChar(14) @unique
+fichaCriminal Crime[]
+endereco String
+armas Arma[]
+@@map("criminoso")
+}
+
+model Arma {
+id String @id @default(uuid())
+idCriminoso String?
+idCrime String?
+tipo String @db.VarChar(50)
+descricao String 
+criminoso Criminoso? @relation(fields: [idCriminoso], references: [id])
+crime Crime? @relation(fields: [idCrime], references: [id])
+@@map("arma")
+}
+
+
+
